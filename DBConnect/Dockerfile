@@ -14,4 +14,4 @@ COPY --from=build /app/out .
 ENV ASPNETCORE_URLS=http://+:$PORT
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "YourProjectName.dll"]
+ENTRYPOINT ["dotnet", "DBConect.dll"]
