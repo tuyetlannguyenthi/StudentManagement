@@ -2,38 +2,50 @@ using DBConnect.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+// ======================
+// Add services
+// ======================
 
-app.MapGet("/", () => "Hello from ASP.NET on Render!");
-
-app.Run();
-// Add services to the container.
+// Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Controllers + JSON config
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ======================
+// Configure middleware
+// ======================
+
+// Swagger (dev only)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// HTTPS (có thể tắt nếu lỗi trên Render)
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// Map API controllers
 app.MapControllers();
 
+// Route test (để check deploy)
+app.MapGet("/", () => "Hello from ASP.NET on Render!");
+
+// Run app
 app.Run();
