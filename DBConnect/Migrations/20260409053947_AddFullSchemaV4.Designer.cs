@@ -4,6 +4,7 @@ using DBConnect.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DBConnect.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260409053947_AddFullSchemaV4")]
+    partial class AddFullSchemaV4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,6 +71,7 @@ namespace DBConnect.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -148,10 +152,6 @@ namespace DBConnect.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)");
 
@@ -228,7 +228,7 @@ namespace DBConnect.Migrations
                     b.Property<int?>("BrandId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -452,7 +452,7 @@ namespace DBConnect.Migrations
                         .IsRequired();
 
                     b.HasOne("DBConnect.Models.Product", "Product")
-                        .WithMany("CartItems")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -498,13 +498,9 @@ namespace DBConnect.Migrations
                         .WithMany("Products")
                         .HasForeignKey("BrandId");
 
-                    b.HasOne("DBConnect.Models.Category", "Category")
+                    b.HasOne("DBConnect.Models.Category", null)
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
+                        .HasForeignKey("CategoryId");
                 });
 
             modelBuilder.Entity("DBConnect.Models.ProductImage", b =>
@@ -574,11 +570,6 @@ namespace DBConnect.Migrations
             modelBuilder.Entity("DBConnect.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("DBConnect.Models.Product", b =>
-                {
-                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("DBConnect.Models.User", b =>
